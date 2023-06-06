@@ -6,8 +6,8 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
+//create a new students in synchronous way
 
-//create a new students
 // app.post("/students",(req,res) => {
 //     console.log(req.body);
 //     const user = new Student(req.body);
@@ -19,15 +19,21 @@ app.use(express.json());
 // })
 
 // create a students details
-app.post("/students",async(req,res) => {
 
-    try{
-        const user = new Student(req.body);
-        const createUser = await user.save();
-        res.status(201).send(createUser);
-    }catch(e) {
-        res.status(400).send(e);
+app.post("/students", async (req, res) => {
+  try {
+    const existingStudent = await Student.findOne({ name: req.body.name });
+
+    if (existingStudent) {
+      return res.status(409).send("Student already exists.");
     }
+
+    const user = new Student(req.body);
+    const createUser = await user.save();
+    res.status(201).send(createUser);
+  } catch (e) {
+    res.status(400).send(e);
+  }
 })
 
 //get the student details
@@ -94,8 +100,8 @@ app.delete("/students/:name", async (req, res) => {
       if (!deleteStudents) {
         return res.status(404).send("Student not found.");
       }
-  
-      res.send(deleteStudents);
+      console.log()
+      res.send("Student data is successfully deleted");
     } catch (e) {
       res.status(400).send(e);
     }
