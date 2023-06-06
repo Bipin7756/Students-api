@@ -44,38 +44,63 @@ app.get("/students", async(req,res) => {
 
 //get the students details with name
 
-app.get("/students/:name", async(req,res) => {
-
-    try{
-        const name = req.params.name;
-        const studentsData = await Student.find({ name: name });
-       
-        if(!studentsData){
-            return res.status(404).send();
-        }else{
-            res.send(studentsData);
-        }
-    }catch(e) {
-        res.status(500).send(e);
+app.get("/students/:name", async (req, res) => {
+    try {
+      const name = req.params.name;
+      const studentsData = await Student.find({ name: name });
+     
+      if (studentsData.length === 0) {
+        return res.status(404).send("Student not found.");
+      } else {
+        res.send(studentsData);
+      }
+    } catch (e) {
+      res.status(500).send(e);
     }
-})
+})  
 
 //update the students details
 
-app.patch("/students/:name", async(req,res) => {
-
-    try{
-        const name = req.params.name;
-        const updateStudents = await Student.findOneAndUpdate( { name } , req.body, {
-            new : true
-        });
-        res.send(updateStudents);
-    }catch(e) {
-        res.status(400).send(e);
+app.patch("/students/:name", async (req, res) => {
+    try {
+      const name = req.params.name;
+      const newPhoneNumber = req.body.phone;
+  
+      const existingStudent = await Student.findOne({ name });
+      if (!existingStudent) {
+        return res.status(404).send("Student not found.");
+      }
+  
+      if (existingStudent.phone === newPhoneNumber) {
+        return res.status(400).send("This number is already registered. Please try a different phone number.");
+      }
+  
+      existingStudent.phone = newPhoneNumber;
+      const updateStudents = await existingStudent.save();
+  
+      res.send(updatStudents);
+    } catch (e) {
+      res.status(400).send(e);
     }
 })
 
-
+// Delete a student
+app.delete("/students/:name", async (req, res) => {
+    try {
+      const name = req.params.name;
+  
+      const deleteStudents = await Student.findOneAndDelete({ name });
+  
+      if (!deleteStudents) {
+        return res.status(404).send("Student not found.");
+      }
+  
+      res.send(deleteStudents);
+    } catch (e) {
+      res.status(400).send(e);
+    }
+})
+  
 app.listen(port, () => {
     console.log(`connection is setup at ${port}`);
 })
