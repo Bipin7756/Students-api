@@ -66,7 +66,7 @@ app.patch("/students/:name", async(req,res) => {
 
     try{
         const name = req.params.name;
-        const updateStudents = await Student.findOneAndUpdate( name , req.body, {
+        const updateStudents = await Student.findOneAndUpdate( { name } , req.body, {
             new : true
         });
         res.send(updateStudents);
