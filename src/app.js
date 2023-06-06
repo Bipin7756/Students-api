@@ -30,7 +30,7 @@ app.post("/students", async (req, res) => {
 
     const user = new Student(req.body);
     const createUser = await user.save();
-    res.status(201).send(createUser);
+    res.status(201).send("Student details added successfully");
   } catch (e) {
     res.status(400).send(e);
   }
