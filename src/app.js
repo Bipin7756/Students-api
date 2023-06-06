@@ -41,7 +41,7 @@ app.post("/students", async (req, res) => {
 app.get("/students", async(req,res) => {
 
     try{
-        const studentsData = await Student.find();
+        const studentsData = await Student.find().lean();
         res.status(201).send(studentsData);
     }catch(e) {
         res.status(400).send(e);
